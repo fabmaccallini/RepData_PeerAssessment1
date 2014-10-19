@@ -52,21 +52,23 @@ The daily observations show a peak around the interval 835 with a maximum of 206
 ```r
 NA.count <- sum(is.na(data$steps))
 data.adj <- data
+```
+The number of missing data is 2304.  
+It was noted that the missing data are not scattered across the data set but are all concentrated in the days having not bar in the first bar-plot. The strategy adopted is to find these days and replace all missing data with the average number of steps of the interval they belonged to.
+
+```r
+# Missing data are not scattered but concentrated in few days
 for (i in 1: length(daily.steps)) {
     if (is.na(daily.steps[i])) {
-        # substitute all NAs with the average value of the interval
+        # For the i-th day substitute all NAs with the average value of the interval
         data.adj$steps[data.adj$date == names(daily.steps)[i]] <- int.steps
     }
 }
-```
-The number of missing data is 2304. All missing data have been replaced by the average number of steps of the interval they belonged to.
-
-```r
 daily.steps.adj <- tapply(data.adj$steps, data.adj$date, sum)
 barplot(daily.steps.adj, main = "Total nuber of steps per day", xlab = "Date", ylab = "Total number of steps")
 ```
 
-![plot of chunk imputdata2](figure/imputdata2-1.png) 
+![plot of chunk imputdata3](figure/imputdata3-1.png) 
 
 ```r
 mean.adj <- mean(daily.steps.adj)
