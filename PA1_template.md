@@ -68,7 +68,7 @@ daily.steps.adj <- tapply(data.adj$steps, data.adj$date, sum)
 barplot(daily.steps.adj, main = "Total nuber of steps per day", xlab = "Date", ylab = "Total number of steps")
 ```
 
-![plot of chunk imputdata3](figure/imputdata3.png) 
+![plot of chunk imputdata3](figure/imputdata2-1.png) 
 
 ```r
 mean.adj <- mean(daily.steps.adj)
