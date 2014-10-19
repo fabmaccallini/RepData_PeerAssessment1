@@ -41,7 +41,7 @@ data.adj <- data
 ```
 The number of missing data is `r NA.count`.  
 It was noted that the missing data are not scattered across the data set but are all concentrated in the days having not bar in the first bar-plot. The strategy adopted is to find these days and replace all missing data with the average number of steps of the interval they belonged to.
-```{r imputdata3, echo = TRUE}
+```{r imputdata2, echo = TRUE}
 # Missing data are not scattered but concentrated in few days
 for (i in 1: length(daily.steps)) {
     if (is.na(daily.steps[i])) {
