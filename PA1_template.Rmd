@@ -17,12 +17,14 @@ data$date <- as.Date(data$date)
 ## What is mean total number of steps taken per day?
 ```{r exploredata, echo = TRUE}
 daily.steps <- tapply(data$steps, data$date, sum)
-barplot(daily.steps, main = "Total nuber of steps per day", xlab = "Date", ylab = "Total number of steps")
+hist(daily.steps, main = "Total nuber of steps per day", xlab = "Date", ylab = "Total number of steps")
 mean <- mean(daily.steps, na.rm = TRUE)
 mean.string <- as.character(round(mean, digits = 2))
 median <- median(daily.steps, na.rm = TRUE)
+abline(v = mean, col = "red")
+legend("topright", "mean", lty = c(1, 1), col = "red")
 ```
-The average number of steps taken per day is `r mean.string` and the median is `r median`.  
+The average number of steps taken per day is `r mean.string` (red line) and the median is `r median`.  
   
 ## What is the average daily activity pattern?
 ```{r pattern, echo = TRUE}
@@ -31,33 +33,33 @@ plot(as.numeric(names(int.steps)), int.steps, type = 'l', main = "Average number
 max <- max(int.steps)
 max.string <- as.character(round(max, digits = 2))
 int <- names(int.steps[which(int.steps == max)])
+abline(v = int, col = "blue")
 ```
-The daily observations show a peak around the interval `r int` with a maximum of `r max.string` average number of steps.  
+The daily observations show a peak at the interval `r int` (blue line) with a maximum of `r max.string` average number of steps.  
   
 ## Imputing missing values
 ```{r imputdata, echo = TRUE}
 NA.count <- sum(is.na(data$steps))
 data.adj <- data
-```
-The number of missing data is `r NA.count`.  
-It was noted that the missing data are not scattered across the data set but are all concentrated in the days having not bar in the first bar-plot. The strategy adopted is to find these days and replace all missing data with the average number of steps of the interval they belonged to.
-```{r imputdata2, echo = TRUE}
-# Missing data are not scattered but concentrated in few days
+missing.days <- sum(is.na(daily.steps))
 for (i in 1: length(daily.steps)) {
     if (is.na(daily.steps[i])) {
-        # For the i-th day substitute all NAs with the average value of the interval
+        # substitute all NAs with the average value of the interval
         data.adj$steps[data.adj$date == names(daily.steps)[i]] <- int.steps
     }
 }
+```
+The number of missing data is `r NA.count`. All missing are in data have been replaced by the average number of steps of the interval they belonged to.
+```{r imputdata2, echo = TRUE}
 daily.steps.adj <- tapply(data.adj$steps, data.adj$date, sum)
-barplot(daily.steps.adj, main = "Total nuber of steps per day", xlab = "Date", ylab = "Total number of steps")
+hist(daily.steps.adj, main = "Total nuber of steps per day", xlab = "Date", ylab = "Total number of steps")
 mean.adj <- mean(daily.steps.adj)
 mean.adj.string <- as.character(round(mean.adj, digits = 2))
 median.adj <- median(daily.steps.adj)
 median.adj.string <- as.character(round(median.adj, digits = 2))
 ```
-The new average number of steps per day is `r mean.adj.string` and the new median is `r median.adj.string`. The mean has not changed, as we expected. The median has suffered a small increase because missing values were replaced with averages in decimal format, whereas steps are in units. The new median falls on one of the days ahving missing data and is equal by construction to the mean.
-  
+The new average number of steps per day is `r mean.adj.string` and the new median is `r median.adj.string`. The mean has not changed, as we expected, however the central bin in new histogram increased by `r missing.days`. The reason is that all missing data belonged to `r missing.days` specific days having a total number of steps equal to the mean and the mean falls in the central bin. The median has suffered a small increase because it falls in one of the days having missing data and is equal to the mean (by construction).  
+
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r weekdays, echo = TRUE, fig.height = 8}
 data.adj$week <- weekdays(data.adj$date)
